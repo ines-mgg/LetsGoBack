@@ -1,4 +1,4 @@
-package core
+package Utils
 
 import (
     "errors"
