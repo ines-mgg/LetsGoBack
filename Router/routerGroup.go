@@ -10,7 +10,7 @@ func (g *RouteGroup) handle(method string, path string, handler context.HandlerF
 	for i := len(g.Middlewares) - 1; i >= 0; i-- {
 		fullHandler = g.Middlewares[i](fullHandler)
 	}
-	g.Router.AddRoute(method, g.Prefix+path, fullHandler)
+	g.Router.AddRoute(method, g.Prefix + path, fullHandler)
 }
 
 func (g *RouteGroup) Use(mw ...middleware.Middleware) {
@@ -34,5 +34,5 @@ func (g *RouteGroup) Group(subPath string) *RouteGroup {
 }
 
 func (g *RouteGroup) ServeStatic(path string, dir string) {
-	g.Router.ServeStatic(g.Prefix+path, dir)
+	g.Router.ServeStatic(g.Prefix + path, dir)
 }
