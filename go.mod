@@ -1,4 +1,4 @@
-module lets-go-back
+module github.com/ines-mgg/LetsGoBack
 
 go 1.24.1
 

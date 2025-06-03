@@ -1,37 +1,24 @@
 package Middleware
 
 import (
-	"fmt"
 	"io"
-	context "lets-go-back/Context"
 	"log"
 	"mime"
 	"net/http"
-	"strings"
+
+	context "github.com/ines-mgg/LetsGoBack/Context"
 )
 
-func UploadLoggerMiddleware(next context.HandlerFunc) context.HandlerFunc {
-	return func(c *context.Context) {
-		if c.Request.Method == http.MethodPost &&
-			strings.HasPrefix(c.Request.Header.Get("Content-Type"), "multipart/form-data") {
-
-			err := c.Request.ParseMultipartForm(32 << 20) // 32 MB
-			if err == nil && c.Request.MultipartForm != nil {
-				for field, files := range c.Request.MultipartForm.File {
-					for _, fh := range files {
-						log.Printf("Upload - field: %s, filename: %s, size: %d bytes",
-							field, fh.Filename, fh.Size)
-					}
-				}
-			} else {
-				log.Printf("Upload - failed to parse multipart form: %v", err)
-			}
-		}
-
-		next(c)
-	}
-}
-
+// UploadValidatorMiddleware validates uploaded files based on the provided options.
+// It checks the MIME type, file size, and whether multiple files are allowed.
+// If validation fails, it responds with a bad request error.
+// If validation succeeds, it stores the uploaded file(s) in the context for further processing.
+// The options include:
+// - MaxFileSize: Maximum allowed file size in bytes.
+// - AllowedMIMEs: List of allowed MIME types.
+// - Field: The form field name for the uploaded file(s).
+// - Multiple: Whether to allow multiple files to be uploaded.
+// - MaxMemory: Maximum memory in bytes to use for file uploads.
 func UploadValidatorMiddleware(opts UploadValidationOptions) Middleware {
 	return func(next context.HandlerFunc) context.HandlerFunc {
 		return func(c *context.Context) {
@@ -39,10 +26,10 @@ func UploadValidatorMiddleware(opts UploadValidationOptions) Middleware {
 			var err error
 
 			if opts.Multiple {
-				files, err = c.GetUploadedFiles(opts.Field)
+				files, err = c.GetUploadedFiles(opts.Field, opts.MaxMemory)
 			} else {
 				var f *context.UploadedFile
-				f, err = c.GetUploadedFile(opts.Field)
+				f, err = c.GetUploadedFile(opts.Field, opts.MaxMemory)
 				if f != nil {
 					files = []*context.UploadedFile{f}
 				}
@@ -50,7 +37,7 @@ func UploadValidatorMiddleware(opts UploadValidationOptions) Middleware {
 
 			if err != nil {
 				log.Printf("✖️ Error getting uploaded file(s): %v", err)
-				c.JSON(http.StatusBadRequest, map[string]string{"error": "upload error"})
+				c.ErrorBadRequest("upload error")
 				return
 			}
 
@@ -72,7 +59,7 @@ func UploadValidatorMiddleware(opts UploadValidationOptions) Middleware {
 				mimeType, _, err := mime.ParseMediaType(contentType)
 				if err != nil {
 					log.Printf("✖️ Failed to parse MIME type: %v", err)
-					c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid content type"})
+					c.ErrorBadRequest("invalid content type")
 					return
 				}
 
@@ -86,21 +73,24 @@ func UploadValidatorMiddleware(opts UploadValidationOptions) Middleware {
 
 				if !allowed {
 					log.Printf("✖️ MIME type not allowed: %s (allowed: %v)", mimeType, opts.AllowedMIMEs)
-					c.JSON(http.StatusBadRequest, map[string]string{
-						"error": fmt.Sprintf("invalid mime type: %s", mimeType),
-					})
+					c.ErrorBadRequest("invalid mime type")
 					return
 				}
 
 				if opts.MaxFileSize > 0 && file.Size > opts.MaxFileSize {
 					log.Printf("✖️ File too large: %d bytes (max: %d)", file.Size, opts.MaxFileSize)
-					c.JSON(http.StatusBadRequest, map[string]string{
-						"error": fmt.Sprintf("file too large: %d bytes", file.Size),
-					})
+					c.ErrorBadRequest("file too large")
 					return
 				}
 			}
 
+			// Store the files in the context for further use
+			if opts.Multiple {
+				c.Set("uploadedFiles", files)
+			} else {
+				c.Set("uploadedFile", files[0])
+			}
+			log.Printf("✔️ Uploaded file(s) validated successfully: %v", files)
 			next(c)
 		}
 	}
