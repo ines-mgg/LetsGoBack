@@ -14,7 +14,7 @@ LetsGoBack requires **Go `v1.24` or higher to work**. If you need to install or 
 After creating your project, install LetsGoBack with the following command:
 
 ```bash
-go get -u github.com/ines-mgg/LetsGoBack
+go get -u github.com/ines-mgg/LetsGoBack@latest
 ```
 
 This command fetches the package and adds it to your project's dependencies, allowing you to start building your web applications with it.
@@ -44,7 +44,7 @@ func main() {
 ```
 
 Now, just run this Go program, and visit `http://localhost:8080` in your browser to see the message.
-For a more complete example, go to [How To Use ?](#how-to-use-) section.
+For a more complete example, go to [LetsGoBackExample](https://github.com/ines-mgg/LetsGoBackExample).
 
 ## ⚡️ Features
 
@@ -66,6 +66,7 @@ package main
 
 import (
     "log"
+    context "github.com/ines-mgg/LetsGoBack/Context"
     router "github.com/ines-mgg/LetsGoBack/Router"
 )
 
@@ -104,6 +105,7 @@ package main
 
 import (
     "log"
+    context "github.com/ines-mgg/LetsGoBack/Context"
     router "github.com/ines-mgg/LetsGoBack/Router"
 )
 
@@ -123,6 +125,7 @@ package main
 
 import (
     "log"
+    context "github.com/ines-mgg/LetsGoBack/Context"
     router "github.com/ines-mgg/LetsGoBack/Router"
 )
 
@@ -142,6 +145,7 @@ package main
 
 import (
     "log"
+    context "github.com/ines-mgg/LetsGoBack/Context"
     router "github.com/ines-mgg/LetsGoBack/Router"
 )
 
@@ -165,6 +169,7 @@ package main
 
 import (
     "log"
+    context "github.com/ines-mgg/LetsGoBack/Context"
     router "github.com/ines-mgg/LetsGoBack/Router"
 )
 
@@ -183,6 +188,7 @@ package main
 
 import (
     "log"
+    context "github.com/ines-mgg/LetsGoBack/Context"
     router "github.com/ines-mgg/LetsGoBack/Router"
 )
 
@@ -209,6 +215,7 @@ package main
 
 import (
     "log"
+    context "github.com/ines-mgg/LetsGoBack/Context"
     router "github.com/ines-mgg/LetsGoBack/Router"
 )
 
@@ -307,88 +314,6 @@ func main() {
 }
 ```
 
-## How Does It work ?
+## Contributing
 
-```Bash
-.
-├── Context/
-│   └── context.go
-│   └── file.go
-│   └── json.go
-│   └── jwt.go
-│   └── response.go
-│   └── types.go
-│   └── utils.go
-├── Helpers/
-│   └── validators.go
-├── Middleware/
-│   └── cors.go
-│   └── error.go
-│   └── jwtAuth.go
-│   └── logger.go
-│   └── recover.go
-│   └── requestID.go
-│   └── types.go
-│   └── upload.go
-│   └── utils.go
-├── Router/
-│   └── router.go
-│   └── routerGroup.go
-│   └── server.go
-│   └── types.go
-│   └── utils.go
-├── go.mod
-└── go.sum
-```
-
-### Context
-
-**Purpose**: encapsulate everything related to a specific HTTP request.
-
-It plays a central role (it’s the "core" of the processing):
-
-- Provides convenient access to the Request, Writer, Params, Method, Path, etc.
-- Manages data shared between middlewares.
-- Offers helpers.
-
-### Middleware
-
-**Purpose**: define how to chain and execute middlewares.
-
-Here you find:
-
-- Reusable middlewares: LoggerMiddleware, ErrorRecoveryMiddleware, UploadValidatorMiddleware, etc.
-
-### Router
-
-**Purpose**: define the routing system and route resolution.
-
-Here you:
-
-- Declare routes: GET, POST, etc.
-- Store the association between method + path → handler.
-- Apply middlewares during route resolution.
-- Resolve dynamic parameters (e.g., `/users/:id`).
-
-## How To Use ?
-
-See folder `HowTo`
-
-### Test URL
-
-See file `HowTo/Backend/rest.http`
-
-1. **Open the Project**  
-    Launch the project folder in Visual Studio Code (or a JetBrains IDE).
-
-2. **Install REST Client Extension**  
-    - For VS Code: Go to the Extensions panel, search for “REST Client”, and install it.
-
-3. **Send a Request**  
-    - Open `HowTo/Backend/rest.http`.
-    - Place your cursor on the desired HTTP request (e.g., `GET http://localhost:8080`).
-    - Click the **Send Request** link above the request, or use the shortcut provided by the extension.
-
-4. **View the Response**  
-    - The response (status, headers, and body) will appear in a new editor pane.
-    - You can modify requests, endpoints, headers, or bodies and re-run them as needed.
+Help is always appreciated ! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on submitting patches and the contribution workflow.
