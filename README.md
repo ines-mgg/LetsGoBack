@@ -14,7 +14,7 @@ LetsGoBack requires **Go `v1.24` or higher to work**. If you need to install or 
 After creating your project, install LetsGoBack with the following command:
 
 ```bash
-go get -u github.com/ines-mgg/LetsGoBack
+go get -u github.com/ines-mgg/LetsGoBack@v0.1.0
 ```
 
 This command fetches the package and adds it to your project's dependencies, allowing you to start building your web applications with it.
