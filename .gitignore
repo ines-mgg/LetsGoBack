@@ -1,1 +1,8 @@
 .DS_Store
+.env
+node_modules
+routes.json
+uploads
+*.jpg
+*.jpeg
+*.png
